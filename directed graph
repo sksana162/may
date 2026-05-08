@@ -1,0 +1,38 @@
+class Solution:
+    def isCycle(self, V, edges):
+
+        # Build adjacency list
+        adj = [[] for _ in range(V)]
+
+        for u, w in edges:
+            adj[u].append(w)
+
+        visited = [False] * V
+        path = [False] * V   # recursion stack
+
+        def dfs(cur):
+            visited[cur] = True
+            path[cur] = True
+
+            for ne in adj[cur]:
+
+                # If not visited, continue DFS
+                if not visited[ne]:
+                    if dfs(ne):
+                        return True
+
+                # If node already in current DFS path -> cycle
+                elif path[ne]:
+                    return True
+
+            # Backtrack
+            path[cur] = False
+            return False
+
+        # Check all components
+        for i in range(V):
+            if not visited[i]:
+                if dfs(i):
+                    return True
+
+        return False
