@@ -1,0 +1,37 @@
+from typing import List
+class Solution:
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        board = [["."] * n for _ in range(n)]
+        res = []
+        def issafe(r, c):
+            # Check upward column
+            for i in range(r - 1, -1, -1):
+                if board[i][c] == "Q":
+                    return False
+            # Check left upper diagonal
+            row, col = r - 1, c - 1
+            while row >= 0 and col >= 0:
+                if board[row][col] == "Q":
+                    return False
+                row -= 1
+                col -= 1
+            # Check right upper diagonal
+            row, col = r - 1, c + 1
+            while row >= 0 and col < n:
+                if board[row][col] == "Q":
+                    return False
+                row -= 1
+                col += 1
+            return True
+        def bt(row):
+            if row == n:
+                res.append(["".join(r) for r in board])
+                return
+            for col in range(n):
+                if issafe(row, col):
+                    board[row][col] = "Q"
+                    bt(row + 1)
+                    board[row][col] = "."
+
+        bt(0)
+return res
