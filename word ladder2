@@ -1,0 +1,39 @@
+class Solution:
+    def findLadders(self, beginWord: str, endWord: str, wordList: List[str]) -> List[List[str]]:
+        if endWord not in wordList:
+            return []
+        wordList.append(beginWord)
+        adj = defaultdict(list)
+        for word in wordList:
+            for i in range(len(word)):
+                pattern = word[:i] + "*" + word[i+1:]
+                adj[pattern].append(word)
+        queue = deque([beginWord])
+        level_map = {beginWord: 1}
+        while queue:
+            cur = queue.popleft()
+            step = level_map[cur]
+            if cur == endWord:
+                break
+            for i in range(len(cur)):
+                pattern = cur[:i] + "*" + cur[i+1:]
+                for ne in adj[pattern]:
+                    if ne not in level_map:
+                        level_map[ne] = step + 1
+                        queue.append(ne)
+        res = []
+        def dfs(cur, path):
+            if cur == beginWord:
+                res.append(path[::-1])
+                return
+            step = level_map[cur]
+            for i in range(len(cur)):
+                pattern = cur[:i] + "*" + cur[i+1:]
+                for ne in adj[pattern]:
+                    if level_map.get(ne, 0) == step - 1:
+                        path.append(ne)
+                        dfs(ne, path)
+                        path.pop()
+        if endWord in level_map:
+            dfs(endWord, [endWord])
+        return res
